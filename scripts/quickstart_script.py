@@ -1,7 +1,7 @@
 from hummingbot.strategy.script_strategy_base import ScriptStrategyBase
 
 
-  class QuickstartScript(ScriptStrategyBase):
+class QuickstartScript(ScriptStrategyBase):
 
     # It is recommended to first use a paper trade exchange connector 
     # while coding your strategy, and then switch to a real one once you're happy with it.
