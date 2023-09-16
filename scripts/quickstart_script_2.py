@@ -24,6 +24,7 @@ class QuickstartScript2(ScriptStrategyBase):
 
     def on_tick(self):
         if self.create_timestamp <= self.current_timestamp:
+            print(self.current_timestamp)
             self.cancel_all_orders()
             proposal: List[OrderCandidate] = self.create_proposal()
             proposal_adjusted: List[OrderCandidate] = self.adjust_proposal_to_budget(proposal)
@@ -36,6 +37,7 @@ class QuickstartScript2(ScriptStrategyBase):
 
     def create_proposal(self) -> List[OrderCandidate]:
         ref_price = self.connectors[self.exchange].get_price_by_type(self.trading_pair, self.price_source)
+        print(ref_price)
         buy_price = ref_price * Decimal(1 - self.bid_spread)
         sell_price = ref_price * Decimal(1 + self.ask_spread)
 
