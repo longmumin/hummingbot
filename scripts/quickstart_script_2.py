@@ -24,7 +24,6 @@ class QuickstartScript2(ScriptStrategyBase):
 
     def on_tick(self):
         if self.create_timestamp <= self.current_timestamp:
-            print(self.current_timestamp)
             self.cancel_all_orders()
             proposal: List[OrderCandidate] = self.create_proposal()
             proposal_adjusted: List[OrderCandidate] = self.adjust_proposal_to_budget(proposal)
@@ -37,7 +36,6 @@ class QuickstartScript2(ScriptStrategyBase):
 
     def create_proposal(self) -> List[OrderCandidate]:
         ref_price = self.connectors[self.exchange].get_price_by_type(self.trading_pair, self.price_source)
-        print(ref_price)
         buy_price = ref_price * Decimal(1 - self.bid_spread)
         sell_price = ref_price * Decimal(1 + self.ask_spread)
 
@@ -70,3 +68,16 @@ class QuickstartScript2(ScriptStrategyBase):
             f"{event.trade_type.name} {round(event.amount, 2)} {event.trading_pair} {self.exchange} at {round(event.price, 2)}")
         self.log_with_clock(logging.INFO, msg)
         self.notify_hb_app_with_timestamp(msg)
+
+    def format_status(self) -> str:
+        if not self.ready_to_trade:
+            return "Market connectors are not ready."
+        mid_price = self.connectors[self.exchange].get_price_by_type(self.trading_pair, PriceType.MidPrice)
+        best_ask = self.connectors[self.exchange].get_price_by_type(self.trading_pair, PriceType.BestAsk)
+        best_bid = self.connectors[self.exchange].get_price_by_type(self.trading_pair, PriceType.BestBid)
+        last_trade_price = self.connectors[self.exchange].get_price_by_type(self.trading_pair, PriceType.LastTrade)
+        custom_format_status = f"""
+        | Mid price: {mid_price:.2f}| Last trade price: {last_trade_price:.2f}
+        | Best ask: {best_ask:.2f} | Best bid: {best_bid:.2f} | 
+        """
+        return custom_format_status
